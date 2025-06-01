@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberSecurity Toolkit{% block title %}{% endblock %}</title>
+    
+    <!-- Bootstrap CSS - Using standard Bootstrap to ensure portability -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Inter Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    {% block head %}{% endblock %}
+</head>
+<body>
+    <!-- Top Navigation Bar -->
+    <div class="container-fluid px-4 py-2">
+        <div class="row">
+            <div class="col-12">
+                <ul class="nav">
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == '/' %}active{% endif %}" href="{{ url_for('index') }}">
+                            <i class="bi bi-grid-fill me-2"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">   
+                        <a class="nav-link {% if request.path == '/about' %}active{% endif %}" href="{{ url_for('about') }}">
+                            <i class="bi bi-info-circle-fill me-2"></i> About
+                        </a>                        
+                    </li>
+                </ul>
+                <hr class="border-secondary my-2">
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- Footer -->
+    <footer class="py-4 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5 class="text-primary mb-3">CyberSecurity Toolkit</h5>
+                    <p class="text-secondary">An educational project combining AI-driven analysis with ethical dark web monitoring.</p>
+                </div>
+
+                <div class="col-md-3">
+                    <h5 class="text-primary mb-3">Resources</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="https://leakcheck.io/" target="_blank" class="text-secondary">LeakCheck</a></li>
+                        <li class="mb-2"><a href="https://haveibeenpwned.com/" target="_blank" class="text-secondary">Have I Been Pwned</a></li>
+                        <li class="mb-2"><a href="https://www.sans.org/security-resources/" target="_blank" class="text-secondary">SANS Resources</a></li>
+                        <li class="mb-2"><a href="https://owasp.org/" target="_blank" class="text-secondary">OWASP</a></li>
+                        <li class="mb-2"><a href="{{ url_for('about') }}" class="text-secondary">About this Project</a></li>
+                        <li class="mb-2"><a href="{{ url_for('index') }}" class="text-secondary">Dashboard</a></li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="border-secondary mt-4 mb-3">
+            <div class="row">
+                <div class="col-md-6">
+                    <p class="mb-0 text-secondary">
+                        <small>Created for educational purposes only. Saskatchewan Polytechnic PROJ 603 Capstone Project.</small>
+                    </p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="mb-0 text-secondary">
+                        <small>&copy; 2025 Ansar Mohammed, Chukwuma Maduabuchukwu, Gerald Darko</small>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Main JavaScript -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    
+    {% block scripts %}{% endblock %}
+</body>
+</html>

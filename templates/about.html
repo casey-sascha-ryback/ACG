@@ -1,0 +1,165 @@
+{% extends 'base.html' %}
+
+{% block title %} - About{% endblock %}
+
+{% block head %}
+<meta name="description" content="Learn about the Python Web-Based Cybersecurity Toolkit, its mission, features, and the team behind it">
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center mb-5">
+        <div class="col-lg-8 text-center">
+            <h1 class="display-5 mb-3">About the CyberSecurity Toolkit</h1>
+            <p class="lead text-muted">
+                An educational platform that brings together AI-driven security analysis and ethical dark web monitoring
+                to enhance cybersecurity education and awareness.
+            </p>
+        </div>
+    </div>
+    
+    <!-- Project Overview Section -->
+    <div class="row justify-content-center mb-5">
+        <div class="col-lg-10">
+            <div class="card shadow mb-4">
+                <div class="card-body p-4 p-md-5">
+                    <div class="row">
+                        <div class="col-md-4 text-center mb-4 mb-md-0">
+                            <div class="bg-primary bg-opacity-10 p-4 rounded-circle d-inline-flex mx-auto mb-3" style="width: 180px; height: 180px;">
+                                <i class="bi bi-shield-lock m-auto" style="font-size: 5rem; color: var(--bs-primary);"></i>
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <h2 class="h3 mb-4">Project Mission</h2>
+                            <p>
+                                Cybersecurity education often lacks hands-on tools that combine foundational practices 
+                                with modern advancements like artificial intelligence and dark web monitoring. 
+                            </p>
+                            <p>
+                                This toolkit bridges the gap by providing an interactive, educational platform that allows 
+                                users to experience and understand modern cybersecurity concepts through practical tools
+                                enhanced with AI and ethical data handling.
+                            </p>
+                            <p>
+                                By combining machine learning with privacy-respecting monitoring capabilities, we aim to 
+                                create a more informed approach to cybersecurity education that prepares users for 
+                                real-world security challenges.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Tools & Features Section -->
+    <div class="row justify-content-center mb-5">
+        <div class="col-lg-10">
+            <h2 class="h3 text-center mb-4">Tools & Key Features</h2>
+            
+            <div class="row g-4">
+                <!-- Password Analyzer Feature -->
+                <div class="col-md-6">
+                    <div class="card h-100 shadow">
+                        <div class="card-body p-4">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="rounded-circle bg-primary bg-opacity-10 p-3 me-3">
+                                    <i class="bi bi-key-fill text-primary"></i>
+                                </div>
+                                <h3 class="h5 mb-0">Password Analyzer</h3>
+                            </div>
+                            <p class="text-muted">
+                                Analyzes password strength using machine learning models trained on common patterns
+                                to provide more nuanced feedback than traditional character-based checkers.
+                            </p>
+                            <h6 class="mt-3 mb-2">Key Capabilities:</h6>
+                            <ul class="text-muted small">
+                                <li>AI-driven strength prediction using scikit-learn</li>
+                                <li>Entropy calculation and estimated crack time</li>
+                                <li>Detailed feedback and educational recommendations</li>
+                                <li>Character composition analysis</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Dark Web Monitor Feature -->
+                <div class="col-md-6">
+                    <div class="card h-100 shadow">
+                        <div class="card-body p-4">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="rounded-circle bg-danger bg-opacity-10 p-3 me-3">
+                                    <i class="bi bi-search text-danger"></i>
+                                </div>
+                                <h3 class="h5 mb-0">Dark Web Monitor</h3>
+                            </div>
+                            <p class="text-muted">
+                                Ethically checks if email addresses have appeared in known data breaches using the 
+                                LeakCheck API with privacy-preserving techniques.
+                            </p>
+                            <h6 class="mt-3 mb-2">Key Capabilities:</h6>
+                            <ul class="text-muted small">
+                                <li>Secure email hashing for privacy</li>
+                                <li>Identification of specific breach details</li>
+                                <li>Remediation guidance and educational context</li>
+                                <li>No storage of user data</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- File Integrity Feature -->
+                <div class="col-md-6">
+                    <div class="card h-100 shadow">
+                        <div class="card-body p-4">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="rounded-circle bg-success bg-opacity-10 p-3 me-3">
+                                    <i class="bi bi-file-earmark-check-fill text-success"></i>
+                                </div>
+                                <h3 class="h5 mb-0">File Integrity Checker</h3>
+                            </div>
+                            <p class="text-muted">
+                                Validates file authenticity and integrity using cryptographic hash functions
+                                to detect unauthorized modifications or corruption.
+                            </p>
+                            <h6 class="mt-3 mb-2">Key Capabilities:</h6>
+                            <ul class="text-muted small">
+                                <li>Multiple secure hashing algorithms (SHA-256, SHA-3, etc.)</li>
+                                <li>Educational explanations of hash function properties</li>
+                                <li>Checksum calculation and verification</li>
+                                <li>Algorithm strength comparison</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Encryption Tool Feature -->
+                <div class="col-md-6">
+                    <div class="card h-100 shadow">
+                        <div class="card-body p-4">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="rounded-circle bg-info bg-opacity-10 p-3 me-3">
+                                    <i class="bi bi-lock-fill text-info"></i>
+                                </div>
+                                <h3 class="h5 mb-0">Encryption Tool</h3>
+                            </div>
+                            <p class="text-muted">
+                                Provides hands-on experience with modern encryption techniques using industry-standard 
+                                algorithms and best practices for secure communication.
+                            </p>
+                            <h6 class="mt-3 mb-2">Key Capabilities:</h6>
+                            <ul class="text-muted small">
+                                <li>Multiple encryption algorithms (AES, ChaCha20, Fernet)</li>
+                                <li>Secure key derivation from passwords</li>
+                                <li>Educational insights into encryption principles</li>
+                                <li>Practical encryption and decryption workflows</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</div>
+{% endblock %}

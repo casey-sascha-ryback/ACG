@@ -1,0 +1,330 @@
+{% extends 'base.html' %}
+
+{% block title %} - Dark Web Monitor{% endblock %}
+
+{% block head %}
+<meta name="description" content="Ethical dark web monitoring to check if your email has been involved in data breaches">
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center mb-4">
+        <div class="col-lg-8 text-center">
+            <h1 class="display-5 mb-3">Dark Web Breach Monitor</h1>
+            <p class="lead text-muted">
+                Check if your email has been exposed in known data breaches using ethically sourced information.
+            </p>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Email Input Form -->
+            <div class="card shadow mb-4">
+                <div class="card-body p-4">
+                    <form id="breachCheckForm">
+                        <div class="mb-3">
+                            <label for="emailInput" class="form-label">Enter your email to check for breaches</label>
+                            <input type="email" class="form-control" id="emailInput" 
+                                   placeholder="email@example.com" required>
+                            <div class="form-text">
+                                Your email is securely hashed before being sent to the Have I Been Pwned API. No personal data is stored.
+                            </div>
+                        </div>
+                        
+                        <div id="darkWebAlertContainer"></div>
+                        
+                        <div class="d-grid gap-2 d-flex justify-content-between">
+                            <button type="button" class="btn btn-secondary flex-grow-1" id="clearDarkWebBtn">
+                                <i class="bi bi-x-circle me-2"></i>Clear
+                            </button>
+                            <button type="submit" class="btn btn-danger flex-grow-1" id="checkBreachesBtn">
+                                <i class="bi bi-search me-2"></i>Check for Breaches
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Results Container -->
+            <div id="breachResults" class="mb-4">
+                <!-- Results will be displayed here -->
+            </div>
+            
+            <!-- Educational Information -->
+            <div class="card shadow mt-5">
+                <div class="card-header bg-info bg-opacity-25 text-info">
+                    <h5 class="mb-0">Understanding Data Breaches & Dark Web Monitoring</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6><i class="bi bi-question-circle me-2"></i>What is the Dark Web?</h6>
+                            <p class="text-muted small">
+                                The "Dark Web" refers to websites that exist on encrypted networks that aren't indexed by 
+                                standard search engines. While not inherently illegal, it's often associated with 
+                                anonymous marketplaces and forums where stolen data may be traded or exposed.
+                            </p>
+                            
+                            <h6><i class="bi bi-shield-lock me-2"></i>Ethical Monitoring Approach</h6>
+                            <p class="text-muted small">
+                                Our tool uses the LeakCheck API, which ethically collects and verifies 
+                                breach data. We never directly access dark web sites or illegal data sources. Instead, 
+                                we rely on legitimate security researchers who responsibly disclose breaches.
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6><i class="bi bi-exclamation-triangle me-2"></i>What to Do If You're Breached</h6>
+                            <ol class="text-muted small">
+                                <li><strong>Change your password immediately</strong> for the affected service</li>
+                                <li><strong>Update passwords on other sites</strong> where you used the same password</li>
+                                <li><strong>Enable two-factor authentication</strong> when available</li>
+                                <li><strong>Monitor financial statements</strong> for unauthorized activity</li>
+                                <li><strong>Consider a password manager</strong> to create unique passwords</li>
+                            </ol>
+                            
+                            <div class="alert alert-info small mt-3">
+                                <i class="bi bi-lightbulb-fill me-2"></i>
+                                <strong>Pro Tip:</strong> Create a system for generating unique but memorable passwords for 
+                                each service, or use a password manager to handle this automatically.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const breachCheckForm = document.getElementById('breachCheckForm');
+    const emailInput = document.getElementById('emailInput');
+    const checkBreachesBtn = document.getElementById('checkBreachesBtn');
+    const clearDarkWebBtn = document.getElementById('clearDarkWebBtn');
+    const breachResults = document.getElementById('breachResults');
+    
+    // Handle form submission
+    if (breachCheckForm) {
+        breachCheckForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            checkBreaches();
+        });
+    }
+    
+    // Handle clear button click
+    if (clearDarkWebBtn) {
+        clearDarkWebBtn.addEventListener('click', function() {
+            // Clear email input
+            if (emailInput) {
+                emailInput.value = '';
+            }
+            
+            // Clear results
+            if (breachResults) {
+                breachResults.innerHTML = '';
+            }
+            
+            // Clear any alerts
+            const alertContainer = document.getElementById('darkWebAlertContainer');
+            if (alertContainer) {
+                alertContainer.innerHTML = '';
+            }
+        });
+    }
+    
+    function checkBreaches() {
+        const email = emailInput.value.trim();
+        if (!email) {
+            showAlert('Please enter an email address', 'warning', 'darkWebAlertContainer');
+            return;
+        }
+        
+        // Show loading spinner
+        breachResults.innerHTML = `
+            <div class="text-center my-4">
+                <div class="spinner-border text-danger" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mt-2">Checking for data breaches...</p>
+                <p class="text-muted small">This may take a moment as we securely check the HIBP database.</p>
+            </div>
+        `;
+        
+        // Disable the button to prevent multiple submissions
+        if (checkBreachesBtn) {
+            checkBreachesBtn.disabled = true;
+        }
+        
+        // Prepare form data
+        const formData = new FormData();
+        formData.append('email', email);
+        
+        // Send request to server
+        fetch('/api/check-breaches', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            displayBreachResults(data, email);
+        })
+        .catch(error => {
+            console.error('Error checking breaches:', error);
+            showAlert('Error checking for breaches. Please try again.', 'danger', 'darkWebAlertContainer');
+            breachResults.innerHTML = '';
+        })
+        .finally(() => {
+            // Re-enable the button
+            if (checkBreachesBtn) {
+                checkBreachesBtn.disabled = false;
+            }
+        });
+    }
+    
+    function displayBreachResults(data, email) {
+        if (data.error) {
+            showAlert(data.error, 'danger', 'darkWebAlertContainer');
+            breachResults.innerHTML = '';
+            return;
+        }
+        
+        const breaches = data.breaches || [];
+        
+        if (breaches.length === 0) {
+            // No breaches found
+            breachResults.innerHTML = `
+                <div class="card border-success">
+                    <div class="card-header bg-success bg-opacity-25 text-success">
+                        <h5 class="mb-0"><i class="bi bi-check-circle me-2"></i>Good News!</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-0">No breaches were found for <strong>${email}</strong>.</p>
+                        <p class="text-muted small mb-0">
+                            This means your email was not found in any known data breaches in the Have I Been Pwned database.
+                            However, this doesn't guarantee complete security, as there may be unreported breaches.
+                        </p>
+                    </div>
+                    <div class="card-footer bg-light">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted">Last checked: ${new Date().toLocaleString()}</small>
+                            <button class="btn btn-sm btn-outline-success" onclick="window.location.reload();">
+                                <i class="bi bi-arrow-clockwise me-1"></i>Check Again
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="alert alert-info mt-3">
+                    <i class="bi bi-shield-check me-2"></i>
+                    <strong>Stay vigilant:</strong> Even though no breaches were found, it's still a good practice
+                    to use strong, unique passwords and enable two-factor authentication where possible.
+                </div>
+            `;
+        } else {
+            // Breaches found
+            breachResults.innerHTML = `
+                <div class="card border-danger">
+                    <div class="card-header bg-danger bg-opacity-25 text-danger">
+                        <h5 class="mb-0">
+                            <i class="bi bi-exclamation-triangle me-2"></i>
+                            ${breaches[0]?.found || breaches.length} ${breaches[0]?.found === 1 ? 'Breach' : 'Breaches'} Found!
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <p>Your email <strong>${email}</strong> appears in the following data breaches:</p>
+                        <div id="breachList" class="mt-3">
+                            <!-- Breach details will be inserted here -->
+                        </div>
+                    </div>
+                    <div class="card-footer bg-light">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted">Last checked: ${new Date().toLocaleString()}</small>
+                            <button class="btn btn-sm btn-outline-danger" onclick="window.location.reload();">
+                                <i class="bi bi-arrow-clockwise me-1"></i>Check Again
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="alert alert-warning mt-3">
+                    <i class="bi bi-shield-exclamation me-2"></i>
+                    <strong>Recommended actions:</strong> Change your passwords immediately, especially if you
+                    reuse passwords across multiple sites. Consider using a password manager and enabling
+                    two-factor authentication.
+                </div>
+            `;
+            
+            // Add breach details
+            const breachList = document.getElementById('breachList');
+            if (breachList) {
+                breaches.forEach(breach => {
+                    const breachDate = new Date(breach.BreachDate).toLocaleDateString();
+                    const dataClasses = breach.DataClasses || [];
+                    
+                    const breachCard = document.createElement('div');
+                    breachCard.className = 'card breach-card mb-3';
+                    
+                    breachCard.innerHTML = `
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h6 class="card-title mb-0">${breach.Title || breach.Name}</h6>
+                                <span class="breach-date">${breachDate}</span>
+                            </div>
+                            <p class="card-text small mb-2">${breach.Description || 'No description available.'}</p>
+                            <div class="mt-2">
+                                <h6 class="small text-muted mb-1">Compromised Data:</h6>
+                                <div class="d-flex flex-wrap gap-1">
+                                    ${dataClasses.map(dc => 
+                                        `<span class="badge bg-secondary">${dc}</span>`
+                                    ).join('')}
+                                </div>
+                            </div>
+                            ${breach.Domain ? `
+                            <div class="mt-2 small">
+                                <strong>Domain:</strong> ${breach.Domain}
+                            </div>
+                            ` : ''}
+                        </div>
+                    `;
+                    
+                    breachList.appendChild(breachCard);
+                });
+                
+                // Add educational breach explanation
+                const explanation = document.createElement('div');
+                explanation.className = 'card mt-4';
+                explanation.innerHTML = `
+                    <div class="card-header bg-info bg-opacity-25 text-info">
+                        <h6 class="mb-0">What To Do Now</h6>
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-2 small">
+                            Finding your email in a data breach means attackers may have access to your:
+                        </p>
+                        <ul class="small">
+                            <li><strong>Login credentials</strong> for the affected service</li>
+                            <li><strong>Personal information</strong> that could be used for identity theft</li>
+                            <li><strong>Security question answers</strong> that might help bypass other accounts</li>
+                        </ul>
+                        
+                        <p class="mb-2 small">
+                            Follow these steps immediately:
+                        </p>
+                        <ol class="small">
+                            <li>Change passwords on all affected sites</li>
+                            <li>Change passwords on other sites where you used the same password</li>
+                            <li>Enable two-factor authentication wherever possible</li>
+                            <li>Monitor your accounts for suspicious activity</li>
+                            <li>Be alert for phishing attempts using your personal information</li>
+                        </ol>
+                    </div>
+                `;
+                
+                breachList.appendChild(explanation);
+            }
+        }
+    }
+});
+</script>
+{% endblock %}

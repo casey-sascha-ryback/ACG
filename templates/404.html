@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block title %} - Page Not Found{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 text-center">
+            <div class="error-template">
+                <h1 class="display-1">
+                    <i class="bi bi-exclamation-triangle text-warning"></i> 404
+                </h1>
+                <h2 class="mb-4">Page Not Found</h2>
+                <div class="error-details mb-4">
+                    <p class="lead">
+                        Sorry, the page you are looking for could not be found or has been moved.
+                    </p>
+                </div>
+                <div class="error-actions">
+                    <a href="{{ url_for('index') }}" class="btn btn-primary btn-lg">
+                        <i class="bi bi-house-door me-2"></i>Take Me Home
+                    </a>
+                    <a href="{{ url_for('about') }}" class="btn btn-outline-secondary btn-lg ms-2">
+                        <i class="bi bi-info-circle me-2"></i>About This Project
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mt-5 justify-content-center">
+        <div class="col-md-8">
+            <div class="card bg-dark bg-opacity-25">
+                <div class="card-body">
+                    <h3 class="h5 text-center mb-3">While you're here, check out our cybersecurity tools:</h3>
+                    <div class="row text-center">
+                        <div class="col-md-3 mb-3 mb-md-0">
+                            <a href="{{ url_for('password_analyzer') }}" class="text-decoration-none">
+                                <div class="d-inline-block p-3 rounded-circle bg-primary bg-opacity-10 mb-2">
+                                    <i class="bi bi-key-fill text-primary" style="font-size: 1.5rem;"></i>
+                                </div>
+                                <p>Password Analyzer</p>
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3 mb-md-0">
+                            <a href="{{ url_for('dark_web_monitor') }}" class="text-decoration-none">
+                                <div class="d-inline-block p-3 rounded-circle bg-danger bg-opacity-10 mb-2">
+                                    <i class="bi bi-search text-danger" style="font-size: 1.5rem;"></i>
+                                </div>
+                                <p>Dark Web Monitor</p>
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3 mb-md-0">
+                            <a href="{{ url_for('file_integrity') }}" class="text-decoration-none">
+                                <div class="d-inline-block p-3 rounded-circle bg-success bg-opacity-10 mb-2">
+                                    <i class="bi bi-file-earmark-check-fill text-success" style="font-size: 1.5rem;"></i>
+                                </div>
+                                <p>File Integrity</p>
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="{{ url_for('encryption_tool') }}" class="text-decoration-none">
+                                <div class="d-inline-block p-3 rounded-circle bg-info bg-opacity-10 mb-2">
+                                    <i class="bi bi-lock-fill text-info" style="font-size: 1.5rem;"></i>
+                                </div>
+                                <p>Encryption Tool</p>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

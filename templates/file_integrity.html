@@ -1,0 +1,373 @@
+{% extends 'base.html' %}
+
+{% block title %} - File Integrity Checker{% endblock %}
+
+{% block head %}
+<meta name="description" content="Verify file integrity and authenticity with multiple secure hashing algorithms">
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center mb-4">
+        <div class="col-lg-8 text-center">
+            <h1 class="display-5 mb-3">File Integrity Checker</h1>
+            <p class="lead text-muted">
+                Verify file authenticity and integrity using cryptographic hash functions to ensure files haven't been tampered with.
+            </p>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <ul class="nav nav-tabs" id="fileIntegrityTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="calculate-tab" data-bs-toggle="tab" 
+                            data-bs-target="#calculate" type="button" role="tab" 
+                            aria-controls="calculate" aria-selected="true">
+                        <i class="bi bi-calculator me-2"></i>Calculate Checksum
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="verify-tab" data-bs-toggle="tab" 
+                            data-bs-target="#verify" type="button" role="tab" 
+                            aria-controls="verify" aria-selected="false">
+                        <i class="bi bi-check-circle me-2"></i>Verify Checksum
+                    </button>
+                </li>
+            </ul>
+            
+            <div class="tab-content border border-top-0 rounded-bottom p-4 bg-dark bg-opacity-25" id="fileIntegrityTabContent">
+                <!-- Calculate Checksum Tab -->
+                <div class="tab-pane fade show active" id="calculate" role="tabpanel" aria-labelledby="calculate-tab">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h4 class="mb-3">Calculate File Checksum</h4>
+                            <p class="text-muted mb-4">
+                                Generate a unique cryptographic hash for your file to verify its integrity later.
+                            </p>
+                            
+                            <div id="fileAlertContainer"></div>
+                            
+                            <form id="checksumForm">
+                                <div class="mb-3">
+                                    <label for="fileInput" class="form-label">Select File</label>
+                                    <input class="form-control" type="file" id="fileInput">
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="algorithmSelect" class="form-label">Hashing Algorithm</label>
+                                    <select class="form-select" id="algorithmSelect">
+                                        <option value="md5">MD5 (Fast, not secure for cryptographic use)</option>
+                                        <option value="sha1">SHA-1 (Legacy, not recommended for security)</option>
+                                        <option value="sha256" selected>SHA-256 (Recommended standard)</option>
+                                        <option value="sha384">SHA-384 (Higher security)</option>
+                                        <option value="sha512">SHA-512 (Maximum security, slower)</option>
+                                        <option value="sha3_256">SHA3-256 (Modern algorithm)</option>
+                                        <option value="sha3_512">SHA3-512 (Modern maximum security)</option>
+                                    </select>
+                                    <div class="form-text">
+                                        <i class="bi bi-info-circle me-1"></i>
+                                        SHA-256 or higher is recommended for security applications.
+                                    </div>
+                                </div>
+                                
+                                <div class="d-grid gap-2 d-flex justify-content-between">
+                                    <button type="button" id="clearCalculateBtn" class="btn btn-secondary flex-grow-1">
+                                        <i class="bi bi-x-circle me-2"></i>Clear
+                                    </button>
+                                    <button type="button" id="calculateChecksumBtn" class="btn btn-primary flex-grow-1">
+                                        <i class="bi bi-hash me-2"></i>Calculate Checksum
+                                    </button>
+                                </div>
+                            </form>
+                            
+                            <div id="checksumResult" class="mt-4">
+                                <!-- Results will be displayed here -->
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="card h-100 bg-info bg-opacity-10">
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <i class="bi bi-info-circle me-2 text-info"></i>
+                                        About File Integrity
+                                    </h5>
+                                    <p class="card-text small">
+                                        A file's checksum (hash) acts like a digital fingerprint. 
+                                        Even the tiniest change to a file will produce a completely different checksum.
+                                    </p>
+                                    
+                                    <h6 class="mt-3">Common Uses:</h6>
+                                    <ul class="small">
+                                        <li>Verify downloaded files haven't been corrupted</li>
+                                        <li>Ensure critical files haven't been tampered with</li>
+                                        <li>Compare files to verify they're identical</li>
+                                        <li>Check if software has been modified by malware</li>
+                                    </ul>
+                                    
+                                    <h6 class="mt-3">Algorithm Comparison:</h6>
+                                    <div class="table-responsive">
+                                        <table class="table table-sm small">
+                                            <thead>
+                                                <tr>
+                                                    <th>Algorithm</th>
+                                                    <th>Security</th>
+                                                    <th>Speed</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>MD5</td>
+                                                    <td class="text-danger">Low</td>
+                                                    <td class="text-success">Fast</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>SHA-1</td>
+                                                    <td class="text-warning">Weak</td>
+                                                    <td class="text-success">Fast</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>SHA-256</td>
+                                                    <td class="text-success">Strong</td>
+                                                    <td class="text-warning">Medium</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>SHA3-512</td>
+                                                    <td class="text-success">Very Strong</td>
+                                                    <td class="text-danger">Slower</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Verify Checksum Tab -->
+                <div class="tab-pane fade" id="verify" role="tabpanel" aria-labelledby="verify-tab">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h4 class="mb-3">Verify File Integrity</h4>
+                            <p class="text-muted mb-4">
+                                Confirm that a file matches its expected checksum to verify it hasn't been modified.
+                            </p>
+                            
+                            <div id="fileVerifyAlertContainer"></div>
+                            
+                            <form id="verifyForm">
+                                <div class="mb-3">
+                                    <label for="fileInputVerify" class="form-label">Select File to Verify</label>
+                                    <input class="form-control" type="file" id="fileInputVerify">
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="checksumInput" class="form-label">Expected Checksum</label>
+                                    <input type="text" class="form-control font-monospace" id="checksumInput" 
+                                           placeholder="Paste the expected checksum here">
+                                    <div class="form-text">
+                                        <i class="bi bi-info-circle me-1"></i>
+                                        Paste the original checksum value to compare against.
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="algorithmSelectVerify" class="form-label">Hashing Algorithm</label>
+                                    <select class="form-select" id="algorithmSelectVerify">
+                                        <option value="md5">MD5</option>
+                                        <option value="sha1">SHA-1</option>
+                                        <option value="sha256" selected>SHA-256</option>
+                                        <option value="sha384">SHA-384</option>
+                                        <option value="sha512">SHA-512</option>
+                                        <option value="sha3_256">SHA3-256</option>
+                                        <option value="sha3_512">SHA3-512</option>
+                                    </select>
+                                    <div class="form-text">
+                                        <i class="bi bi-info-circle me-1"></i>
+                                        Use the same algorithm that was used to generate the original checksum.
+                                    </div>
+                                </div>
+                                
+                                <div class="d-grid gap-2 d-flex justify-content-between">
+                                    <button type="button" id="clearVerifyBtn" class="btn btn-secondary flex-grow-1">
+                                        <i class="bi bi-x-circle me-2"></i>Clear
+                                    </button>
+                                    <button type="button" id="verifyChecksumBtn" class="btn btn-success flex-grow-1">
+                                        <i class="bi bi-check-circle me-2"></i>Verify Integrity
+                                    </button>
+                                </div>
+                            </form>
+                            
+                            <div id="verifyResult" class="mt-4">
+                                <!-- Results will be displayed here -->
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="card h-100 bg-success bg-opacity-10">
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <i class="bi bi-shield-check me-2 text-success"></i>
+                                        File Integrity Best Practices
+                                    </h5>
+                                    
+                                    <h6 class="mt-3">When to Verify Files:</h6>
+                                    <ul class="small">
+                                        <li><strong>Downloads:</strong> Before installing software from the internet</li>
+                                        <li><strong>Critical Data:</strong> When working with important files and backups</li>
+                                        <li><strong>Forensics:</strong> When analyzing evidence or system files</li>
+                                        <li><strong>Compliance:</strong> For regulatory requirements and audits</li>
+                                    </ul>
+                                    
+                                    <div class="alert alert-warning small mt-3">
+                                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                        <strong>Security Note:</strong> Matching checksums verify file integrity but don't guarantee that a file is safe. Malicious files can have valid checksums too. Always obtain checksums from trusted sources.
+                                    </div>
+                                    
+                                    <h6 class="mt-3">Educational Example:</h6>
+                                    <p class="small">
+                                        If you download Ubuntu Linux, the website provides SHA-256 checksums. By verifying the downloaded ISO file against this checksum, you can confirm it wasn't corrupted or tampered with during download.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Educational Section -->
+            <div class="card shadow mt-5">
+                <div class="card-header bg-primary bg-opacity-25 text-primary">
+                    <h5 class="mb-0">Understanding Cryptographic Hash Functions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6><i class="bi bi-key me-2"></i>Key Properties of Hash Functions</h6>
+                            <ul class="text-muted small">
+                                <li><strong>One-way:</strong> You cannot reverse a hash to get the original data</li>
+                                <li><strong>Deterministic:</strong> The same input always produces the same hash</li>
+                                <li><strong>Avalanche effect:</strong> A tiny change produces a completely different hash</li>
+                                <li><strong>Collision resistance:</strong> It's extremely difficult to find two inputs with the same hash</li>
+                                <li><strong>Fixed size:</strong> Output length is fixed regardless of input size</li>
+                            </ul>
+                            
+                            <h6 class="mt-4"><i class="bi bi-shield me-2"></i>Security Considerations</h6>
+                            <p class="text-muted small">
+                                Older algorithms like MD5 and SHA-1 have known vulnerabilities and are no longer considered secure 
+                                for cryptographic applications. They can still be useful for non-security critical checksums but 
+                                SHA-256 or better should be used for security purposes.
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6><i class="bi bi-diagram-3 me-2"></i>How Hashing Works</h6>
+                            <p class="text-muted small">
+                                Hashing algorithms process data in blocks, combining each block with the result from previous blocks. 
+                                This creates a "chain" effect where changing even one bit anywhere in the input causes a completely 
+                                different output.
+                            </p>
+                            
+                            <div class="card bg-dark text-light small p-2 mb-3">
+                                <pre class="m-0"><code>File → [Hashing Algorithm] → Checksum
+  
+"Hello" → [SHA-256] → "185f8db32271fe25f561a6fc938b2e264306ec304eda518007d1764826381969"
+"Hallo" → [SHA-256] → "d3751d33f9cd5049c4af2b462735457e4d3baf130bcbb87f389e349fbaeb20b9"</code></pre>
+                            </div>
+                            
+                            <div class="alert alert-info small">
+                                <i class="bi bi-lightbulb-fill me-2"></i>
+                                <strong>Educational Insight:</strong> Hash functions are fundamental to many security systems, including:
+                                <ul class="mb-0 mt-1">
+                                    <li>Digital signatures</li>
+                                    <li>Password storage (with additional salting)</li>
+                                    <li>Blockchain technology</li>
+                                    <li>Data integrity verification</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/file_upload.js') }}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Get buttons and input elements
+    const clearCalculateBtn = document.getElementById('clearCalculateBtn');
+    const clearVerifyBtn = document.getElementById('clearVerifyBtn');
+    
+    const fileInput = document.getElementById('fileInput');
+    const algorithmSelect = document.getElementById('algorithmSelect');
+    const checksumResult = document.getElementById('checksumResult');
+    
+    const fileInputVerify = document.getElementById('fileInputVerify');
+    const checksumInput = document.getElementById('checksumInput');
+    const algorithmSelectVerify = document.getElementById('algorithmSelectVerify');
+    const verifyResult = document.getElementById('verifyResult');
+    
+    // Clear Calculate section
+    if (clearCalculateBtn) {
+        clearCalculateBtn.addEventListener('click', function() {
+            // Clear file input
+            if (fileInput) {
+                fileInput.value = '';
+            }
+            
+            // Reset algorithm to default (SHA-256)
+            if (algorithmSelect) {
+                algorithmSelect.value = 'sha256';
+            }
+            
+            // Clear results
+            if (checksumResult) {
+                checksumResult.innerHTML = '';
+            }
+            
+            // Clear any alerts
+            const alertContainer = document.getElementById('fileAlertContainer');
+            if (alertContainer) {
+                alertContainer.innerHTML = '';
+            }
+        });
+    }
+    
+    // Clear Verify section
+    if (clearVerifyBtn) {
+        clearVerifyBtn.addEventListener('click', function() {
+            // Clear file input
+            if (fileInputVerify) {
+                fileInputVerify.value = '';
+            }
+            
+            // Clear expected checksum input
+            if (checksumInput) {
+                checksumInput.value = '';
+            }
+            
+            // Reset algorithm to default (SHA-256)
+            if (algorithmSelectVerify) {
+                algorithmSelectVerify.value = 'sha256';
+            }
+            
+            // Clear results
+            if (verifyResult) {
+                verifyResult.innerHTML = '';
+            }
+            
+            // Clear any alerts
+            const alertContainer = document.getElementById('fileVerifyAlertContainer');
+            if (alertContainer) {
+                alertContainer.innerHTML = '';
+            }
+        });
+    }
+});
+</script>
+{% endblock %}
