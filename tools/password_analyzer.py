@@ -51,12 +51,22 @@ class PasswordStrengthModel:
         Returns:
             int: Predicted strength (0-4)
         """
+        # Check character composition requirements
+        length = len(password)
+        has_lowercase = bool(re.search(r'[a-z]', password))
+        has_uppercase = bool(re.search(r'[A-Z]', password))
+        has_digit = bool(re.search(r'\d', password))
+        has_special = bool(re.search(r'[!@#$%^&*(),.?":{}|<>]', password))
+        
         # STRICT RULE: Passwords under 8 characters can never be strong
-        if len(password) < 8:
-            if len(password) < 4:
+        if length < 8:
+            if length < 4:
                 return 0  # Very weak
             else:
                 return 1  # Weak maximum for short passwords
+        
+        # STRICT RULE: For Strong (3) or Very Strong (4), must have ALL character types
+        all_char_types = has_lowercase and has_uppercase and has_digit and has_special
         
         if not self.is_trained:
             # If model is not trained, use a simple heuristic
@@ -66,7 +76,7 @@ class PasswordStrengthModel:
         X_chars = self.vectorizer.transform([password])
 
         # Add password length as a feature
-        length_feature = np.array([len(password)]).reshape(-1, 1)
+        length_feature = np.array([length]).reshape(-1, 1)
 
         # Combine features
         X = np.hstack((X_chars.toarray(), length_feature))
@@ -74,8 +84,11 @@ class PasswordStrengthModel:
         # Predict strength
         prediction = self.classifier.predict(X)[0]
         
-        # Ensure prediction is not higher than what length allows
-        # For 8+ character passwords, use model prediction as-is
+        # Apply strict character type requirements
+        if prediction >= 3 and not all_char_types:
+            # Downgrade to Moderate (2) if missing any character type
+            prediction = 2
+        
         return prediction
 
     def _simple_strength_check(self, password):
@@ -93,6 +106,9 @@ class PasswordStrengthModel:
             else:
                 return 1  # Weak maximum for short passwords
 
+        # STRICT RULE: For Strong (3) or Very Strong (4), must have ALL character types
+        all_char_types = has_lowercase and has_uppercase and has_digit and has_special
+        
         # Count criteria met (only for passwords 8+ characters)
         criteria_count = sum([
             has_lowercase, has_uppercase, has_digit, has_special
@@ -104,9 +120,13 @@ class PasswordStrengthModel:
         elif criteria_count == 2:
             return 2  # Moderate
         elif criteria_count == 3:
-            return 3  # Strong
+            return 2  # Moderate (missing one character type)
+        elif all_char_types and length >= 12:
+            return 4  # Very Strong (8+ chars with all types AND 12+ length)
+        elif all_char_types:
+            return 3  # Strong (8+ chars with all types)
         else:
-            return 4  # Very Strong
+            return 2  # Moderate (should not reach here, but safety)
 
     def save_model(self, filepath):
         """Save the trained model to a file"""
