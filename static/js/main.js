@@ -19,7 +19,62 @@ document.addEventListener('DOMContentLoaded', function() {
       sanitize: false
     });
   });
+
+  // Initialize dark mode toggle
+  initializeDarkMode();
 });
+
+/**
+ * Dark Mode Functionality
+ */
+function initializeDarkMode() {
+  const darkModeToggle = document.getElementById('darkModeToggle');
+  const themeIcon = document.getElementById('themeIcon');
+  const htmlElement = document.documentElement;
+
+  // Check for saved theme preference or default to dark mode
+  const savedTheme = localStorage.getItem('theme') || 'dark';
+  
+  // Apply saved theme
+  setTheme(savedTheme);
+  
+  // Update toggle state based on current theme
+  darkModeToggle.checked = savedTheme === 'dark';
+  updateThemeIcon(savedTheme);
+
+  // Add event listener for toggle
+  darkModeToggle.addEventListener('change', function() {
+    const newTheme = this.checked ? 'dark' : 'light';
+    setTheme(newTheme);
+    updateThemeIcon(newTheme);
+    localStorage.setItem('theme', newTheme);
+  });
+}
+
+/**
+ * Set the theme
+ * @param {string} theme - 'light' or 'dark'
+ */
+function setTheme(theme) {
+  const htmlElement = document.documentElement;
+  htmlElement.setAttribute('data-bs-theme', theme);
+  htmlElement.setAttribute('data-theme', theme);
+}
+
+/**
+ * Update the theme icon
+ * @param {string} theme - 'light' or 'dark'
+ */
+function updateThemeIcon(theme) {
+  const themeIcon = document.getElementById('themeIcon');
+  if (themeIcon) {
+    if (theme === 'dark') {
+      themeIcon.className = 'bi bi-moon-fill';
+    } else {
+      themeIcon.className = 'bi bi-sun-fill';
+    }
+  }
+}
 
 /**
  * Displays an alert message
