@@ -1,0 +1,135 @@
+Complete MVC Flow
+
+┌─────────────────────────────────────────────────────────────────────┐
+│                            USER BROWSER                             │
+│                                                                     │
+│  (Renders Views)       (Makes Requests)       (Receives Responses)  │
+└────────────┬───────────────────┬───────────────────────┬────────────┘
+             │                   │                       │
+             ▼                   ▼                       ▼
+┌───────────────────────┐ ┌─────────────────┐ ┌─────────────────────┐
+│       VIEWS           │ │    CONTROLLER   │ │        MODELS       │
+│  (HTML Templates)     │ │    (app.py)     │ │  (tools/ + models/) │
+├───────────────────────┤ ├─────────────────┤ ├─────────────────────┤
+│ • index.html          │ │ Route Handlers: │ │ password_analyzer.py│
+│ • about.html          │ │ - /             │ │ file_integrity.py   │
+│ • password_analyzer.html│ │ - /about       │ │ encryption_tool.py  │
+│ • dark_web_monitor.html │ │ - /password-analyzer│ │ leakcheck_integration.py│
+│ • file_integrity.html   │ │ - /dark-web-monitor │ └─────────────────────┘
+│ • encryption_tool.html  │ │ - /file-integrity   │        ▲
+└───────────────────────┘ │ - /encryption-tool  │        │
+           ▲              └─────────────────┘        │
+           │                      ▲                 │
+           │                      │                 │
+           └──────────────────────┼─────────────────┘
+                                  │
+                         ┌────────┴────────┐
+                         │   Static Assets   │
+                         │  (JS/CSS/Images)  │
+                         └──────────────────┘
+
+
+Detailed View Integration for Each Component:
+
+            Password Analyzer MVC Flow
+
+┌───────────────────────┐  GET   ┌─────────────────┐
+│ password_analyzer.html │ ◀────── │ /password-analyzer │
+└────────────┬──────────┘        └─────────────────┘
+             │                             ▲
+             │ POST                        │
+             ▼                             │
+┌───────────────────────┐        ┌────────┴────────┐
+│ password_strength.js  │ ──────▶ │ password_analyzer.py │
+└───────────────────────┘        └─────────────────┘
+
+
+            Dark Web Monitor MVC Flow
+
+┌───────────────────────┐  GET   ┌─────────────────┐
+│ dark_web_monitor.html  │ ◀────── │ /dark-web-monitor │
+└────────────┬──────────┘        └────────┬────────┘
+             │                             │
+             │ POST (Form)                 │
+             ▼                             ▼
+┌───────────────────────┐        ┌─────────────────────┐
+│        Browser        │        │ leakcheck_integration.py │
+└───────────────────────┘        └─────────────────────┘
+
+
+            File Integrity MVC Flow
+
+┌───────────────────────┐  GET   ┌─────────────────┐
+│ file_integrity.html   │ ◀────── │ /file-integrity   │
+└────────────┬──────────┘        └────────┬────────┘
+             │                             │
+             │ POST (File)                 │
+             ▼                             ▼
+┌───────────────────────┐        ┌──────────────────┐
+│        Browser        │        │ file_integrity.py │
+└───────────────────────┘        └──────────────────┘
+
+
+            Encryption/Decryption MVC Flow
+
+┌───────────────────────────┐  GET   ┌───────────────────────┐
+│ encryption_tool.html      │ ◀────── │ /encryption-tool      │
+└────────────┬──────────────┘        └──────────┬────────────┘
+             │                                  │
+             │ POST (Form)                 │
+             ▼                                  ▼
+┌───────────────────────────┐        ┌───────────────────────┐
+│ encryption.js             │        │ encryption_tool.py     │
+│ - Handles form submission │        │ - encrypt()           │
+│ - Algorithm selection     │        │ - decrypt()           │
+│ - Key derivation          │        │ - PBKDF2 + Algorithms │
+└────────────┬──────────────┘        └──────────┬────────────┘
+             │                                  │
+             └───────────┬──────────────────────┘
+                         ▼
+┌──────────────────────────────────────────────┐
+│ API Endpoints (Controller)                   │
+├──────────────────────┬───────────────────────┤
+│ /api/encrypt (POST)  │ /api/decrypt (POST)   │
+└──────────────────────┴───────────────────────┘
+
+
+
+Flowchart with All Components
+
+┌───────────────────────────┐
+│        USER CLIENT        │
+└─────────────┬─────────────┘
+              │
+              ▼
+┌───────────────────────────┐
+│        FLASK APP          │
+├───────────┬───────────────┤
+│  VIEWS    │  CONTROLLER   │
+│ (Templates)  (Routes)     │
+│           │               │
+│  ┌─────┐  │  ┌─────────┐  │
+│  │HTML │◀─┼──│ @app.route │
+│  └─────┘  │  └────┬────┘  │
+│           │       │       │
+│  ┌─────┐  │       ▼       │
+│  │ JS  │──┘  ┌─────────┐  │
+│  └─────┘     │ API     │  │
+│              │ Endpoints│  │
+│              └────┬────┘  │
+│                   │       │
+└───────────────────┼───────┘
+                    ▼
+           ┌─────────────────┐
+           │     MODELS      │
+           │  (tools/*.py)   │
+           └─────────────────┘
+                    ▲
+                    │
+           ┌─────────────────┐
+           │ External        │
+           │ Resources       │
+           │ (APIs, ML Model)│
+           └─────────────────┘
+
+
