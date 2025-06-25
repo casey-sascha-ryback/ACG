@@ -129,7 +129,7 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
             <div>
               <h6>Checksum</h6>
-              <pre class="bg-light p-2 rounded overflow-auto"><code>${data.checksum}</code></pre>
+              <pre class="bg-light p-2 rounded overflow-auto"><code style="color:black;">${data.checksum}</code></pre>
             </div>
           </div>
         </div>
