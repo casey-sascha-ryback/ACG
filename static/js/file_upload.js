@@ -249,11 +249,11 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
             <div class="mb-3">
               <h6>Expected Checksum</h6>
-              <pre class="bg-light p-2 rounded overflow-auto"><code>${data.provided_checksum}</code></pre>
+              <pre class="bg-light p-2 rounded overflow-auto"><code style="color:black;">${data.provided_checksum}</code></pre>
             </div>
             <div class="mb-3">
               <h6>Calculated Checksum</h6>
-              <pre class="bg-light p-2 rounded overflow-auto"><code>${data.calculated_checksum}</code></pre>
+              <pre class="bg-light p-2 rounded overflow-auto"><code style="color:black;">${data.calculated_checksum}</code></pre>
             </div>
             <div class="alert alert-${statusClass}">
               ${isValid ? 
